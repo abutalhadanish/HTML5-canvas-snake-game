@@ -9,7 +9,6 @@ game = {
         this.interval = setInterval(updateGame, 150);
         this.gridColumns = this.canvas.width/gridSize;
         this.gridRows = this.canvas.height/gridSize;
-        this.grid = createMatrix(this.gridRows, this.gridColumns)
     },
     clearFrame: function(){
         this.context.clearRect(0,0,this.canvas.width, this.canvas.height)
@@ -46,7 +45,6 @@ snake_model = function(color= "blue"){
     this.width = gridSize;
     this.height = gridSize;
     this.trace = [];
-    // this.tail = Array(2);
     this.color = color;
     this.direction = "Right"
     this.drawCurrentState = function(){
@@ -82,16 +80,12 @@ function updateGame() {
     updatedSnakeHead=[]
     switch(snake.direction){
         case "Right": updatedSnakeHead[0] = snakeHead[0]; updatedSnakeHead[1] = wrapAroundNumber(snakeHead[1]+1, game.gridColumns)
-        // snake.trace.push([snakeHead[0], ]);
                     break;
         case "Left": updatedSnakeHead[0] = snakeHead[0]; updatedSnakeHead[1] = wrapAroundNumber(snakeHead[1]-1, game.gridColumns)
-        // snake.trace.push([snakeHead[0], wrapAroundNumber(snakeHead[1]-1, game.gridColumns)]);
                     break;
         case "Up": updatedSnakeHead[0] = wrapAroundNumber(snakeHead[0]-1, game.gridRows); updatedSnakeHead[1] = snakeHead[1];
-        // snake.trace.push([wrapAroundNumber(snakeHead[0]-1, game.gridRows), snakeHead[1]]);
                     break;
         case "Down": updatedSnakeHead[0] = wrapAroundNumber(snakeHead[0]+1, game.gridRows); updatedSnakeHead[1] = snakeHead[1];
-        // snake.trace.push([wrapAroundNumber(snakeHead[0]+1,game.gridRows), snakeHead[1]]);
                     break;
     }
     if(snake.inTheBody(updatedSnakeHead)){
@@ -110,13 +104,7 @@ function updateGame() {
     snake.drawCurrentState();
 }
 
-function createMatrix(m, n){
-    matrix = Array(m);
-    for (i=0;i<m;i++){
-        matrix[i] = Array(n).fill(0);
-    }
-    return matrix;
-}
+
 function getRandomInRange(min, max) {
     return Math.floor(Math.random()*(max-min)+min);
 }
@@ -148,11 +136,11 @@ document.addEventListener("keydown", function(e){
 /******
  * TODO
  * (v) Ensure that the food doesn't land on snake itself
- * shift grid to food model/remove grid
+ * (v) shift grid to food model/remove grid
  * add logic to game over if it collides with own body
  * pushing multiple control at once, both should apply
  * replace width and height with single gridsize
  * make snake run faster as it grow
  * make function for matching 2d array
- * (v) if snake moving to right, prevent it from directly moving left... and handle similar cases
+ * (v) `if snake moving to right, prevent it from directly moving left... and handle similar cases
  */
