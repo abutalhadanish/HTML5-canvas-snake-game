@@ -1,6 +1,7 @@
 gridSize = 50;
 gridColumns = 10;
 gridRows = 10;
+
 game = {
     canvas: document.createElement("canvas"),
     start: function(){
@@ -129,23 +130,15 @@ function wrapAroundNumber(n, max){
 document.addEventListener("keydown", function(e){
     if (e.key == "ArrowDown"){
         game.actionQueue.push("Down")
-        // if (snake.direction != "Up")
-        //     snake.direction = "Down";
     }
     if (e.key == "ArrowUp"){
         game.actionQueue.push("Up")
-        // if (snake.direction != "Down")
-        //     snake.direction = "Up";
     }
     if (e.key == "ArrowRight"){
         game.actionQueue.push("Right")
-        // if (snake.direction != "Left")
-        //     snake.direction = "Right";
     }
     if (e.key == "ArrowLeft"){
         game.actionQueue.push("Left")
-        // if (snake.direction != "Right")
-        //     snake.direction = "Left";
     }
 })
 
