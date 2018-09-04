@@ -8,9 +8,8 @@ game = {
         this.canvas.height = gridRows*gridSize;
         this.context = this.canvas.getContext("2d");
         document.body.append(this.canvas);
-        this.interval = setInterval(updateGame, 150);
-        // this.gridColumns = this.canvas.width/gridSize;
-        // this.gridRows = this.canvas.height/gridSize;
+        this.interval = setInterval(updateGame, 250);
+        this.actionQueue = [];
     },
     clearFrame: function(){
         this.context.clearRect(0,0,this.canvas.width, this.canvas.height)
@@ -75,6 +74,22 @@ function startGame(){
 function updateGame() {
     snakeHead = snake.trace[snake.trace.length-1];
     snakeTail = snake.trace[0];
+    while (keyPressed = game.actionQueue.shift()){
+        if(keyPressed == "Up" || keyPressed == "Down"){
+            if (snake.direction != "Up" && snake.direction != "Down")
+            {
+                snake.direction = keyPressed;
+                break;
+            }
+        }
+        else {
+            if (snake.direction != "Left" && snake.direction != "Right")
+            {
+                snake.direction = keyPressed;
+                break;
+            }
+        }
+    }
     updatedSnakeHead=[]
     switch(snake.direction){
         case "Right": updatedSnakeHead[0] = snakeHead[0]; updatedSnakeHead[1] = wrapAroundNumber(snakeHead[1]+1, gridColumns)
@@ -113,20 +128,24 @@ function wrapAroundNumber(n, max){
 
 document.addEventListener("keydown", function(e){
     if (e.key == "ArrowDown"){
-        if (snake.direction != "Up")
-            snake.direction = "Down";
+        game.actionQueue.push("Down")
+        // if (snake.direction != "Up")
+        //     snake.direction = "Down";
     }
     if (e.key == "ArrowUp"){
-        if (snake.direction != "Down")
-            snake.direction = "Up";
+        game.actionQueue.push("Up")
+        // if (snake.direction != "Down")
+        //     snake.direction = "Up";
     }
     if (e.key == "ArrowRight"){
-        if (snake.direction != "Left")
-            snake.direction = "Right";
+        game.actionQueue.push("Right")
+        // if (snake.direction != "Left")
+        //     snake.direction = "Right";
     }
     if (e.key == "ArrowLeft"){
-        if (snake.direction != "Right")
-            snake.direction = "Left";
+        game.actionQueue.push("Left")
+        // if (snake.direction != "Right")
+        //     snake.direction = "Left";
     }
 })
 
@@ -136,10 +155,10 @@ document.addEventListener("keydown", function(e){
  * (v) Ensure that the food doesn't land on snake itself
  * (v) shift grid to food model/remove grid
  * add logic to game over if it collides with own body
- * pushing multiple control at once, both should apply (control queue)
- * replace width and height with single gridsize
+ * (v) pushing multiple control at once, both should apply (action queue)
+ * (v) replace width and height with single gridsize
  * make snake run faster as it grow
  * make function for matching 2d array
  * (v) if snake moving to right, prevent it from directly moving left... and handle similar cases
  * make snalke head differrent coloured
- */
+ ******/
