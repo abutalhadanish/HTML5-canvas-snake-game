@@ -1,14 +1,16 @@
-gridSize = 30;
+gridSize = 50;
+gridColumns = 10;
+gridRows = 10;
 game = {
     canvas: document.createElement("canvas"),
     start: function(){
-        this.canvas.width = 600;
-        this.canvas.height = 600;
+        this.canvas.width = gridColumns*gridSize;
+        this.canvas.height = gridRows*gridSize;
         this.context = this.canvas.getContext("2d");
         document.body.append(this.canvas);
         this.interval = setInterval(updateGame, 150);
-        this.gridColumns = this.canvas.width/gridSize;
-        this.gridRows = this.canvas.height/gridSize;
+        // this.gridColumns = this.canvas.width/gridSize;
+        // this.gridRows = this.canvas.height/gridSize;
     },
     clearFrame: function(){
         this.context.clearRect(0,0,this.canvas.width, this.canvas.height)
@@ -18,12 +20,10 @@ game = {
 food_model = function(x, y, color= "red"){
     this.x = 0;
     this.y = 0;
-    this.width = gridSize;
-    this.height = gridSize;
     this.location = [0,0];
     this.color = color;
     this.relocateFood = function(){
-        this.location = [getRandomInRange(0,game.gridRows-1), getRandomInRange(0, game.gridColumns-1)];
+        this.location = [getRandomInRange(0,gridRows-1), getRandomInRange(0, gridColumns-1)];
         if (snake.inTheBody(this.location))
         {
             this.relocateFood();
@@ -36,14 +36,12 @@ food_model = function(x, y, color= "red"){
         ctx.fillStyle = this.color;
         ctx.strokeStyle=("#844");
         // ctx.fillRect(this.location[1]*this.width, this.location[0]*this.height, this.width, this.height);
-        ctx.arc(this.location[1]*this.width+this.width/2, this.location[0]*this.height+this.height/2, this.width/2, 0, 2*Math.PI);
+        ctx.arc(this.location[1]*gridSize+gridSize/2, this.location[0]*gridSize+gridSize/2, gridSize/2, 0, 2*Math.PI);
         ctx.fill();
         ctx.stroke();
     }
 }
 snake_model = function(color= "blue"){
-    this.width = gridSize;
-    this.height = gridSize;
     this.trace = [];
     this.color = color;
     this.direction = "Right"
@@ -52,7 +50,7 @@ snake_model = function(color= "blue"){
         ctx.fillStyle = this.color;
         for (i=0; i<this.trace.length; i++ )
         {
-            ctx.fillRect(this.trace[i][1]*this.width+1, this.trace[i][0]*this.height+1, this.width-2, this.height-2);
+            ctx.fillRect(this.trace[i][1]*gridSize+1, this.trace[i][0]*gridSize+1, gridSize-2, gridSize-2);
         }
     }
     this.inTheBody = function(coords){
@@ -69,8 +67,8 @@ function startGame(){
      game.start();
      food = new food_model(30,30, "lightgreen");
      snake = new snake_model("#447");
-     snake.trace.push([game.gridRows/2, game.gridColumns/2-1]) //Initialize snake position in these two middle coordinates
-     snake.trace.push([game.gridRows/2, game.gridColumns/2])
+     snake.trace.push([gridRows/2, gridColumns/2-1]) //Initialize snake position in these two middle coordinates
+     snake.trace.push([gridRows/2, gridColumns/2])
      food.relocateFood();
 }
 
@@ -79,13 +77,13 @@ function updateGame() {
     snakeTail = snake.trace[0];
     updatedSnakeHead=[]
     switch(snake.direction){
-        case "Right": updatedSnakeHead[0] = snakeHead[0]; updatedSnakeHead[1] = wrapAroundNumber(snakeHead[1]+1, game.gridColumns)
+        case "Right": updatedSnakeHead[0] = snakeHead[0]; updatedSnakeHead[1] = wrapAroundNumber(snakeHead[1]+1, gridColumns)
                     break;
-        case "Left": updatedSnakeHead[0] = snakeHead[0]; updatedSnakeHead[1] = wrapAroundNumber(snakeHead[1]-1, game.gridColumns)
+        case "Left": updatedSnakeHead[0] = snakeHead[0]; updatedSnakeHead[1] = wrapAroundNumber(snakeHead[1]-1, gridColumns)
                     break;
-        case "Up": updatedSnakeHead[0] = wrapAroundNumber(snakeHead[0]-1, game.gridRows); updatedSnakeHead[1] = snakeHead[1];
+        case "Up": updatedSnakeHead[0] = wrapAroundNumber(snakeHead[0]-1, gridRows); updatedSnakeHead[1] = snakeHead[1];
                     break;
-        case "Down": updatedSnakeHead[0] = wrapAroundNumber(snakeHead[0]+1, game.gridRows); updatedSnakeHead[1] = snakeHead[1];
+        case "Down": updatedSnakeHead[0] = wrapAroundNumber(snakeHead[0]+1, gridRows); updatedSnakeHead[1] = snakeHead[1];
                     break;
     }
     if(snake.inTheBody(updatedSnakeHead)){
@@ -138,9 +136,10 @@ document.addEventListener("keydown", function(e){
  * (v) Ensure that the food doesn't land on snake itself
  * (v) shift grid to food model/remove grid
  * add logic to game over if it collides with own body
- * pushing multiple control at once, both should apply
+ * pushing multiple control at once, both should apply (control queue)
  * replace width and height with single gridsize
  * make snake run faster as it grow
  * make function for matching 2d array
- * (v) `if snake moving to right, prevent it from directly moving left... and handle similar cases
+ * (v) if snake moving to right, prevent it from directly moving left... and handle similar cases
+ * make snalke head differrent coloured
  */
