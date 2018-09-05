@@ -27,9 +27,12 @@ game = {
         this.context.textAlign='center';
         this.context.font = "80px Arial";
         this.context.strokeText("Game Over",this.canvas.width/2,this.canvas.height/2);
+        this.context.font = "25px Arial";
+        this.context.fillStyle="#fcc"
+        this.context.fillText("SCORE: "+game.score,this.canvas.width/2,this.canvas.height/2+35);
         this.context.font = "20px Arial";
         this.context.fillStyle="#ccc"
-        this.context.fillText("Press ENTER key to restart",this.canvas.width/2,this.canvas.height/2+40);
+        this.context.fillText("Press ENTER key to restart",this.canvas.width/2,this.canvas.height/2+65);
         this.is_halted = true;
     }
 }
@@ -84,6 +87,8 @@ snake_model = function(color= "blue"){
 
 function startGame(){
      game.start();
+     game.score=0;
+     updateScoreInHTML();
      food = new food_model(30,30, "lightgreen");
      snake = new snake_model("#447");
      snake.trace.push([gridRows/2, gridColumns/2-1]) //Initialize snake position in these two middle coordinates
@@ -124,7 +129,7 @@ function updateGame() {
     if (updatedSnakeHead[0] == food.location[0] && updatedSnakeHead[1] == food.location[1]){
         food.relocateFood();
         game.score+=10;
-        document.getElementById("score").getElementsByTagName("span")[0].innerHTML= game.score;
+        updateScoreInHTML()
     }
     else {
         snake.trace.shift();
@@ -146,6 +151,10 @@ function getRandomInRange(min, max) {
 
 function wrapAroundNumber(n, max){
     return (n%max+max)%max;
+}
+
+function updateScoreInHTML() {
+    document.getElementById("score").getElementsByTagName("span")[0].innerHTML= game.score;
 }
 
 document.addEventListener("keydown", function(e){
