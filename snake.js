@@ -15,6 +15,18 @@ game = {
     clearFrame: function(){
         this.context.clearRect(0,0,this.canvas.width, this.canvas.height)
     },
+    over: function(){
+        clearInterval(this.interval);
+        this.context.fillStyle = "#ff000066";
+        this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
+        this.context.fillStyle = "#1122cccc";
+        this.context.fillRect(10,this.canvas.height/3,this.canvas.width-20, this.canvas.height/3);
+        this.context.font = "80px Arial";
+        this.context.strokeStyle= "white";
+        this.context.textAlign='center';
+        
+        this.context.strokeText("Game Over",this.canvas.width/2,this.canvas.height/2);
+    }
 }
 
 food_model = function(x, y, color= "red"){
@@ -103,7 +115,8 @@ function updateGame() {
                     break;
     }
     if(snake.inTheBody(updatedSnakeHead)){
-        alert("Game Over !!!");
+        game.over();
+        return;
     }
     snake.trace.push(updatedSnakeHead);
     if (updatedSnakeHead[0] == food.location[0] && updatedSnakeHead[1] == food.location[1]){
@@ -154,4 +167,6 @@ document.addEventListener("keydown", function(e){
  * make function for matching 2d array
  * (v) if snake moving to right, prevent it from directly moving left... and handle similar cases
  * make snalke head differrent coloured
+ * (v) secure this js
+ * (v) center align game over message
  ******/
