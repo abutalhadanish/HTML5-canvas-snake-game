@@ -4,6 +4,8 @@ gridRows = 10;
 
 game = {
     canvas: document.createElement("canvas"),
+    is_halted: false,
+    score: 0,
     start: function(){
         this.canvas.width = gridColumns*gridSize;
         this.canvas.height = gridRows*gridSize;
@@ -21,11 +23,14 @@ game = {
         this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
         this.context.fillStyle = "#1122cccc";
         this.context.fillRect(10,this.canvas.height/3,this.canvas.width-20, this.canvas.height/3);
-        this.context.font = "80px Arial";
         this.context.strokeStyle= "white";
         this.context.textAlign='center';
-        
+        this.context.font = "80px Arial";
         this.context.strokeText("Game Over",this.canvas.width/2,this.canvas.height/2);
+        this.context.font = "20px Arial";
+        this.context.fillStyle="#ccc"
+        this.context.fillText("Press ENTER key to restart",this.canvas.width/2,this.canvas.height/2+40);
+        this.is_halted = true;
     }
 }
 
@@ -62,6 +67,8 @@ snake_model = function(color= "blue"){
         ctx.fillStyle = this.color;
         for (i=0; i<this.trace.length; i++ )
         {
+            if (i == this.trace.length-1)
+                ctx.fillStyle = "#444";
             ctx.fillRect(this.trace[i][1]*gridSize+1, this.trace[i][0]*gridSize+1, gridSize-2, gridSize-2);
         }
     }
@@ -114,18 +121,19 @@ function updateGame() {
         case "Down": updatedSnakeHead[0] = wrapAroundNumber(snakeHead[0]+1, gridRows); updatedSnakeHead[1] = snakeHead[1];
                     break;
     }
+    if (updatedSnakeHead[0] == food.location[0] && updatedSnakeHead[1] == food.location[1]){
+        food.relocateFood();
+        game.score+=10;
+        document.getElementById("score").getElementsByTagName("span")[0].innerHTML= game.score;
+    }
+    else {
+        snake.trace.shift();
+    }
     if(snake.inTheBody(updatedSnakeHead)){
         game.over();
         return;
     }
     snake.trace.push(updatedSnakeHead);
-    if (updatedSnakeHead[0] == food.location[0] && updatedSnakeHead[1] == food.location[1]){
-        food.relocateFood();
-        // add extra score
-    }
-    else {
-        snake.trace.shift();
-    }
     game.clearFrame();
     food.drawCurrentState();
     snake.drawCurrentState();
@@ -141,6 +149,12 @@ function wrapAroundNumber(n, max){
 }
 
 document.addEventListener("keydown", function(e){
+    if (game.is_halted && e.key=="Enter"){
+        game.is_halted = false;
+        delete food;
+        delete snake;
+        startGame();
+    }
     if (e.key == "ArrowDown"){
         game.actionQueue.push("Down")
     }
@@ -160,13 +174,15 @@ document.addEventListener("keydown", function(e){
  * TODO
  * (v) Ensure that the food doesn't land on snake itself
  * (v) shift grid to food model/remove grid
- * add logic to game over if it collides with own body
+ * (v) add logic to game over if it collides with own body
  * (v) pushing multiple control at once, both should apply (action queue)
  * (v) replace width and height with single gridsize
  * make snake run faster as it grow
  * make function for matching 2d array
  * (v) if snake moving to right, prevent it from directly moving left... and handle similar cases
- * make snalke head differrent coloured
+ * (v) make snalke head differrent coloured
  * (v) secure this js
  * (v) center align game over message
+ * (x) add some halt in game over message
+ * display score
  ******/
